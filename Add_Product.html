@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Products</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="View_Product.css">
+</head>
+<body>
+
+<div class="container products-form margin-thirty">
+    <a href="http://localhost:8888/" class="link">Home</a>
+    <h2 class="margin-thirty">Add Product</h2>
+    <form id="form-id">
+        <div class="form-group margin-twenty">
+            <label for="name" id="name-label">Product Name</label>
+            <input type="text" class="form-control" id="name"
+                   placeholder="Enter Product Name">
+        </div>
+
+        <div class="form-group margin-ten">
+            <label for="description" id="description-label">Description</label>
+            <input type="text" class="form-control" id="description"
+                   placeholder="Enter Description">
+        </div>
+
+        <button type="submit" class="btn btn-primary submit-button margin-twenty">Submit</button>
+    </form>
+
+    <div id="error-container" class="margin-ten"></div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#form-id').on('submit', function (e) {
+            e.preventDefault();
+            const name = $('#name').val();
+            const description = $('#description').val();
+
+            const data = {
+                name,
+                description,
+            }
+            $.ajax({
+                url: `http://localhost:8888/api/Products`,
+                type: "POST",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data) 
+                    window.location.replace("/");
+                },
+                error: function (data){
+                    console.log(data.responseJSON)
+
+                    $('#error-container').html('')
+                    for (const property in data.responseJSON) {
+                        $('#error-container').append(` <div class='error-text'>${data.responseJSON[property]}</div>`)
+                    }
+                }
+            });
+        })
+
+    })
+
+
+</script>
+
+</body>
+</html>

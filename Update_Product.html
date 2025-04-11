@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Products</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="View_Product.css">
+
+</head>
+<body>
+
+<div class="container Products-form margin-thirty">
+    <br>
+    <a href="http://localhost:8888/" class="link">Home</a>
+    <br>
+    <br>
+    <h2 class="margin-thirty">Edit Product</h2>
+    <br>
+    <form id="form-id">
+        <div class="form-group margin-twenty">
+            <label for="name">Product Name</label>
+            <input type="text" class="form-control" id="name"
+                   placeholder="enter product name">
+        </div>
+        <br>
+        <div class="form-group margin-ten">
+            <label for="description" id="description-label">description</label>
+            <input type="text" class="form-control" id="description"
+                   placeholder="Enter description">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary submit-button margin-twenty">Submit</button>
+    </form>
+
+    <div id="error-container" class="margin-ten"></div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        const urlArry = window.location.pathname.split("/")
+        const id = urlArry[2]
+        $.ajax({
+            url: `http://localhost:8888/api/Products/${id}`,
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                const product = data[0]
+                $('#name').val(product.name)
+                $('#description').val(product.description)
+
+            }
+        });
+
+        $('#form-id').on('submit', function (e) {
+            const urlArry = window.location.pathname.split("/")
+            const id = urlArry[2]
+            e.preventDefault();
+            const name = $('#name').val();
+            const description = $('#description').val();
+
+            const data = {
+                name,
+                description,
+            }
+            $.ajax({
+                url: `http://localhost:8888/api/Products/${id}`,
+                type: "PUT",
+                data: data,
+                dataType: "json",
+                success: function (data) {
+                    console.log("here");
+                    window.location.replace("http://localhost:8888/");
+                },
+                error: function (data){
+                    $('#error-container').html('')
+                    for (const property in data.responseJSON) {
+                        $('#error-container').append(` <div class='error-text'>${data.responseJSON[property]}</div>`)
+                    }
+                }
+            });
+        })
+
+    })
+
+</script>
+
+<style>
+    * {
+        margin: 0 auto;
+        text-align: center;
+    }
+</style>
+
+</body>
+</html>
